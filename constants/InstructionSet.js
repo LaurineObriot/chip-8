@@ -1,6 +1,7 @@
 const INSTRUCTION_SET = [
   {
     key: 2,
+	id: 'CLS',
     name: 'CLS',
     mask: 0xffff,
     pattern: 0x00e0,
@@ -8,6 +9,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 3,
+	id: 'RET',
     name: 'RET',
     mask: 0xffff,
     pattern: 0x00ee,
@@ -15,13 +17,16 @@ const INSTRUCTION_SET = [
   },
   {
     key: 4,
+	id: 'JP_ADDR',
     name: 'JP',
     mask: 0xf000,
     pattern: 0x1000,
-	lines.push(`${address}  ${opcode}  ${operands}`)
+	arguments: [{ mask: 0x0fff, shift: 0, type: 'A' }],
+
   },
   {
     key: 5,
+	id: 'CALL_ADDR',
     name: 'CALL',
     mask: 0xf000,
     pattern: 0x2000,
@@ -29,6 +34,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 6,
+	id: 'SE_VX_NN',
     name: 'SE',
     mask: 0xf000,
     pattern: 0x3000,
@@ -36,6 +42,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 7,
+	id: 'SNE_VX_NN',
     name: 'SNE',
     mask: 0xf000,
     pattern: 0x4000,
@@ -43,6 +50,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 8,
+	id: 'SE_VX_VY',
     name: 'SE',
     mask: 0xf00f,
     pattern: 0x5000,
@@ -50,6 +58,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 9,
+	id: 'LD_VX_NN',
     name: 'LD',
     mask: 0xf000,
     pattern: 0x6000,
@@ -57,6 +66,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 10,
+	id: 'ADD_VX_NN',
     name: 'ADD',
     mask: 0xf000,
     pattern: 0x7000,
@@ -64,13 +74,15 @@ const INSTRUCTION_SET = [
   },
   {
     key: 11,
-    name: 'LD',
+	id: 'LD_VX_VY',
+	name: 'LD',
     mask: 0xf00f,
     pattern: 0x8000,
 	arguments: [ { mask: 0x0f00, shift: 8, type: 'R' }, { mask: 0x00f0, shift: 4, type: 'R' } ],
   },
   {
     key: 12,
+	id: 'OR_VX_VY',
     name: 'OR',
     mask: 0xf00f,
     pattern: 0x8001,
@@ -78,6 +90,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 13,
+	id: 'AND_VX_VY',
     name: 'AND',
     mask: 0xf00f,
     pattern: 0x8002,
@@ -85,6 +98,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 14,
+	id: 'XOR_VX_VY',
     name: 'XOR',
     mask: 0xf00f,
     pattern: 0x8003,
@@ -92,6 +106,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 15,
+	id: 'ADD_VX_VY',
     name: 'ADD',
     mask: 0xf00f,
     pattern: 0x8004,
@@ -99,6 +114,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 16,
+	id: 'SUB_VX_VY',
     name: 'SUB',
     mask: 0xf00f,
     pattern: 0x8005,
@@ -106,6 +122,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 17,
+	id: 'SHR_VX_VY',
     name: 'SHR',
     mask: 0xf00f,
     pattern: 0x8006,
@@ -113,6 +130,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 18,
+	id: 'SUBN_VX_VY',
     name: 'SUBN',
     mask: 0xf00f,
     pattern: 0x8007,
@@ -120,6 +138,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 19,
+	id: 'SHL_VX_VY',
     name: 'SHL',
     mask: 0xf00f,
     pattern: 0x800e,
@@ -127,6 +146,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 20,
+	id: 'SNE_VX_VY',
     name: 'SNE',
     mask: 0xf00f,
     pattern: 0x9000,
@@ -134,6 +154,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 21,
+	id: 'LD_I_ADDR',
     name: 'LD',
     mask: 0xf000,
     pattern: 0xa000,
@@ -141,6 +162,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 22,
+	id: 'JP_VO_ADDR',
     name: 'JP',
     mask: 0xf000,
     pattern: 0xb000,
@@ -148,6 +170,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 23,
+	id: 'RND_VX_NN',
     name: 'RND',
     mask: 0xf000,
     pattern: 0xc000,
@@ -155,6 +178,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 24,
+	id: 'DRW_VX_VY_N',
     name: 'DRW',
     mask: 0xf000,
     pattern: 0xd000,
@@ -166,6 +190,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 25,
+	id: 'SKP_VX',
     name: 'SKP',
     mask: 0xf0ff,
     pattern: 0xe09e,
@@ -173,6 +198,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 26,
+	id: 'SKNP_VX',
     name: 'SKNP',
     mask: 0xf0ff,
     pattern: 0xe0a1,
@@ -180,6 +206,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 27,
+	id: 'LD_VX_DT',
     name: 'LD',
     mask: 0xf00f,
     pattern: 0xf007,
@@ -187,6 +214,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 28,
+	id: 'LD_VX_K',
     name: 'LD',
     mask: 0xf00f,
     pattern: 0xf00a,
@@ -194,6 +222,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 29,
+	id: 'LD_DT_VX',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf015,
@@ -201,6 +230,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 30,
+	id: 'LD_ST_VX',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf018,
@@ -208,6 +238,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 31,
+	id: 'ADD_I_VX',
     name: 'ADD',
     mask: 0xf0ff,
     pattern: 0xf01e,
@@ -215,6 +246,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 32,
+	id: 'LD_F_VX',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf029,
@@ -222,6 +254,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 33,
+	id: 'LD_B_VX',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf033,
@@ -229,6 +262,7 @@ const INSTRUCTION_SET = [
   },
   {
     key: 34,
+	id: 'LD_I_VX',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf055,
@@ -236,17 +270,19 @@ const INSTRUCTION_SET = [
   },
   {
     key: 35,
+	id: 'LD_VX_I',
     name: 'LD',
     mask: 0xf0ff,
     pattern: 0xf065,
 	arguments: [ { mask: 0x0f00, shift: 8, type: 'R' }, { mask: 0x00ff, shift: 0, type: '[I]' } ],
    },
    {
-     key: 36,
-     name: 'DW',
-     mask: 0x0000,
-     pattern: 0x0000,
-     arguments: [ { mask: 0xffff, shift: 0, type: 'DW' } ],
+    key: 36,
+	id: 'DW',
+    name: 'DW',
+    mask: 0x0000,
+    pattern: 0x0000,
+    arguments: [ { mask: 0xffff, shift: 0, type: 'DW' } ],
   },
 ]
 
