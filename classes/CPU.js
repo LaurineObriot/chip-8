@@ -138,17 +138,17 @@ class this {
         break
       case 'OR_VX_VY':
         // Set Vx = Vx OR Vy.
-        this.registers[args[0]] = this.registers[args[0]] | this.registers[args[1]]
+		this.registers[args[0]] |= this.registers[args[1]]
         this._next()
         break
       case 'AND_VX_VY':
         // Set Vx = Vx AND Vy.
-        this.registers[args[0]] = this.registers[args[0]] & this.registers[args[1]]
+		this.registers[args[0]] &= this.registers[args[1]]
         this._next()
         break
       case 'XOR_VX_VY':
         // Set Vx = Vx XOR Vy.
-        this.registers[args[0]] = this.registers[args[0]] ^ this.registers[args[1]]
+		this.registers[args[0]] ^= this.registers[args[1]]
         this._next()
         break
       case 'ADD_VX_VY':
@@ -168,7 +168,7 @@ class this {
       case 'SHR_VX_VY':
         // Set Vx = Vx SHR 1.
         this.registers[0xf] = this.registers[args[0]] & 1
-        this.registers[args[0]] = this.registers[args[0]] >> 1
+		this.registers[args[0]] >>= 1
         this._next()
         break
       case 'SUBN_VX_VY':
@@ -182,7 +182,7 @@ class this {
         // Set Vx = Vx SHL 1.
 		this.registers[0xf] = this.registers[args[0]] >> 4 === 1 ? 1 : 0
 
-        this.registers[args[0]] = this.registers[args[0]] << 1
+		this.registers[args[0]] <<= 1
         this._next()
         break
       case 'SNE_VX_VY':
