@@ -4,5 +4,5 @@ const { RomBuffer } = require('./classes/RomBuffer')
 const { CPU } = require('./classes/CPU')
 const romBuffer = new RomBuffer(filename, fs)
 
-CPU.load(romBuffer)
-CPU.run()
+cpu.load(romBuffer)
+cpu.run()
