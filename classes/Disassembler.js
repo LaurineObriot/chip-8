@@ -57,7 +57,7 @@ class Disassembler {
 		            args.push('0x' + arg.toString(16))
 		        }
 		      })
-		      formatted = decodedInstruction.instruction.name + ' ' + args.join(', ')
+			  formatted = decodedInstruction.instruction.name
 		} else {
 		formatted = decodedIntruction.instruction.name
 		}
