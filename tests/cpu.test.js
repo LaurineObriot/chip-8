@@ -12,6 +12,15 @@ describe('CPU tests', () => {
 
     expect(cpu.PC).toBe(0xf)
     expect(cpu.SP).toBe(0x1)
+
+    cpu.load({ data: [ 0x00ee ] })
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Stack underflow.')
+    }
   })
 
   test('test cpu 04: 1nnn - JP addr', () => {
@@ -29,6 +38,16 @@ describe('CPU tests', () => {
 	expect(cpu.SP).toBe(0)
     expect(cpu.stack[cpu.SP]).toBe(PC + 2)
     expect(cpu.PC).toBe(0x062)
+
+    cpu.load({ data: [0x2062] })
+    cpu.SP = 14
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Stack overflow.')
+    }
   })
 
   test('test cpu 06: 3xkk - SE Vx, byte', () => {
@@ -229,25 +248,47 @@ describe('CPU tests', () => {
     // untestable
   })
 
-  test.skip('test cpu 24: Dxyn - DRW Vx, Vy, nibble', () => {
-    cpu.load({ data: [0xdab5] })
-    cpu.step()
-    // cpu.registers[0xa] = 0
-    // cpu.registers[0xb] = 0
-    // cpu.I = 0x300
-    // cpu.memory[0x300] = 0b11110000
-    // cpu.memory[0x301] = 0b11100000
-	// cpu.step()
-    // expect(cpu.memory[0x300]).toBe(0)
-    // I'll get back to this one
+  test('test cpu 24: Dxyn - DRW Vx, Vy, nibble', () => {
+    cpu.load({ data: [ 0xdab5 ] })
+    cpu.I = 4091
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Memory out of bounds.')
+    }
+    // todo: passing test
   })
 
-  test.skip('test cpu 25: Ex9E - SKP Vx', () => {
+	test('test cpu 25: Ex9E - SKP Vx', () => {
     // todo
+	cpu.load({ data: [ 0xea9e ] })
+	cpu.registers[0xa] = 0
+	cpu.step()
+
+	expect(cpu.PC).toBe(0x204)
+
+	cpu.load({ data: [ 0xea9e ] })
+	cpu.registers[0xa] = 1
+	cpu.step()
+
+	expect(cpu.PC).toBe(0x202)
   })
 
-  test.skip('test cpu 26: ExA1 - SKNP Vx', () => {
+  test('test cpu 26: ExA1 - SKNP Vx', () => {
     // todo
+	cpu.load({ data: [ 0xeba1 ] })
+	cpu.registers[0xb] = 0
+	cpu.step()
+
+	expect(cpu.PC).toBe(0x202)
+
+	cpu.load({ data: [ 0xea9e ] })
+	cpu.registers[0xb] = 1
+	cpu.step()
+
+	expect(cpu.PC).toBe(0x204)
   })
 
   test('test cpu 27: Fx07 - LD Vx, DT', () => {
@@ -258,8 +299,12 @@ describe('CPU tests', () => {
     expect(cpu.registers[0xa]).toBe(0xf)
   })
 
-  test.skip('test cpu 28: Fx0A - LD Vx, K', () => {
+  test('test cpu 28: Fx0A - LD Vx, K', () => {
     // todo
+	cpu.load({ data: [ 0xfb0a ] })
+	cpu.step()
+
+	expect(cpu.registers[0xb]).toBe(0)
   })
 
   test('test cpu 29: Fx15 - LD DT, Vx', () => {
@@ -287,12 +332,29 @@ describe('CPU tests', () => {
     expect(cpu.I).toBe(0xe + 0xf)
   })
 
-  test.skip('test cpu 32: Fx29 - LD F, Vx', () => {
-	  cpu.load({ data: [0xfa29] })
+  test('test cpu 32: Fx29 - LD F, Vx', () => {
+    cpu.load({ data: [ 0xfa29 ] })
+    cpu.registers[0xa] = 16
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Invalid digit.')
+    }
+
+    cpu.load({ data: [ 0xfa29 ] })
+    cpu.registers[0xa] = 0xa
       cpu.step()
 
       expect(cpu.I).toBe(0xa * 5)
-      expect(this.memory[0xa * 50]).toBe(0xf0)  })
+
+	      // todo print a to console for now
+	      cpu.load({ data: [ 0xfa29, 0xdab5 ] })
+	      cpu.registers[0xa] = 0xa
+	      cpu.step()
+	      cpu.step()
+  })
 
   test('test cpu 33: Fx33 - LD B, Vx', () => {
     cpu.load({ data: [0xfa33] })
@@ -303,6 +365,17 @@ describe('CPU tests', () => {
     expect(cpu.memory[0x300]).toBe(1)
     expect(cpu.memory[0x301]).toBe(2)
     expect(cpu.memory[0x302]).toBe(3)
+
+    cpu.load({ data: [ 0xfa33 ] })
+    cpu.registers[0xa] = 0x7b
+    cpu.I = 4094
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Memory out of bounds.')
+    }
   })
 
   test('test cpu 34: Fx55 - LD [I], Vx', () => {
@@ -318,6 +391,16 @@ describe('CPU tests', () => {
       expect(cpu.memory[cpu.I + i]).toBe(i)
     }
     expect(cpu.memory[cpu.I + 0xc]).toBe(0)
+
+    cpu.load({ data: [ 0xfb55 ] })
+    cpu.I = 4085
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Memory out of bounds.')
+    }
   })
 
   test('test cpu 35: Fx65 - LD Vx, [I]', () => {
@@ -333,10 +416,26 @@ describe('CPU tests', () => {
       expect(cpu.registers[i]).toBe(i)
     }
     expect(cpu.registers[0xb]).toBe(0)
+
+    cpu.load({ data: [ 0xfa65 ] })
+    cpu.I = 4086
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Memory out of bounds.')
+    }
   })
 
-  test.skip('test data word', () => {
-    cpu.load({ data: [0x5154] })
-    // todo
+  test('test data word', () => {
+    cpu.load({ data: [ 0x5154 ] })
+
+    try {
+      cpu.step()
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error.message).toBe('Illegal instruction.')
+    }
   })
 })
