@@ -357,7 +357,7 @@ describe('CPU tests', () => {
 		cpu.load({ data: [0xfb0a] })
 		cpu.step()
 
-		expect(cpu.registers[0xb]).toBe(0)
+		expect(cpu.registers[0xb]).toBe(5)
 	})
 
 	test('29: Fx15 - LD_DT_VX', () => {
