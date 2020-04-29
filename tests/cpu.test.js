@@ -26,7 +26,7 @@ describe('CPU tests', () => {
 	    expect(cpu.PC).toBe(0xf)
 	    expect(cpu.SP).toBe(0x1)
 
-	    cpu.load({ data: [ 0x00ee ] })
+		cpu.load({ data: [0x00ee] })
 
 		expect(() => {
 		    cpu.step()
@@ -252,17 +252,18 @@ describe('CPU tests', () => {
 	    expect(cpu.PC).toBe(0x2 + 0x300)
 	})
 
+	// Can't seed/test random number
 	// test('23: Cxkk - RND_VX_NN', () => {}
 
-	test.only('24: Dxyn - DRW_VX_VY_N', () => {
-		cpu.load({ data: [0xd005] })
+	test('24: Dxyn - DRW_VX_VY_N', () => {
+      cpu.load({ data: [0xd005] })
 	    cpu.I = 4091
 
 		expect(() => {
 	        cpu.step()
 		}).toThrowError('Memory out of bounds.')
 
-		cpu.load({ data: [ 0xd125 ] })
+		cpu.load({ data: [0xd125] })
 	    cpu.registers[1] = 1
 	    cpu.registers[2] = 1
 	    cpu.step()
@@ -289,7 +290,7 @@ describe('CPU tests', () => {
 	    expect(cpuInterface.display[5][1]).toBe(1)
 	    expect(cpu.registers[0xf]).toBe(0)
 
-		cpu.load({ data: [ 0xd125 ] })
+		cpu.load({ data: [0xd125] })
 	    cpu.registers[1] = 1
 	    cpu.registers[2] = 1
 	    cpu.step()
@@ -315,13 +316,13 @@ describe('CPU tests', () => {
 
 	test.skip('25: Ex9E - SKP_VX', () => {
 	    // todo
-		cpu.load({ data: [ 0xea9e ] })
+		cpu.load({ data: [0xea9e] })
 		cpu.registers[0xa] = 0
 		cpu.step()
 
 		expect(cpu.PC).toBe(0x204)
 
-		cpu.load({ data: [ 0xea9e ] })
+		cpu.load({ data: [0xea9e] })
 		cpu.registers[0xa] = 1
 		cpu.step()
 
@@ -330,13 +331,13 @@ describe('CPU tests', () => {
 
 	test.skip('26: ExA1 - SKNP_VX', () => {
 	    // todo tick
-		cpu.load({ data: [ 0xeba1 ] })
+		cpu.load({ data: [0xeba1] })
 		cpu.registers[0xb] = 0
 		cpu.step()
 
 		expect(cpu.PC).toBe(0x202)
 
-		cpu.load({ data: [ 0xea9e ] })
+		cpu.load({ data: [0xea9e] })
 		cpu.registers[0xb] = 1
 		cpu.step()
 
@@ -353,7 +354,7 @@ describe('CPU tests', () => {
 
 	test('28: Fx0A - LD_VX_K', () => {
 	    // todo tick
-		cpu.load({ data: [ 0xfb0a ] })
+		cpu.load({ data: [0xfb0a] })
 		cpu.step()
 
 		expect(cpu.registers[0xb]).toBe(0)
@@ -387,7 +388,7 @@ describe('CPU tests', () => {
 	})
 
 	test('32: Fx29 - LD_F_VX', () => {
-	    cpu.load({ data: [ 0xfa29 ] })
+	    cpu.load({ data: [0xfa29] })
 	    cpu.registers[0xa] = 16
 
 		expect(() => {
@@ -395,7 +396,7 @@ describe('CPU tests', () => {
 		}).toThrowError('Invalid digit.')
 
 
-	    cpu.load({ data: [ 0xfa29 ] })
+	    cpu.load({ data: [0xfa29] })
 	    cpu.registers[0xa] = 0xa
 	    cpu.step()
 
@@ -418,7 +419,7 @@ describe('CPU tests', () => {
 	    expect(cpu.memory[0x301]).toBe(2)
 	    expect(cpu.memory[0x302]).toBe(3)
 
-	    cpu.load({ data: [ 0xfa33 ] })
+	    cpu.load({ data: [0xfa33] })
 	    cpu.registers[0xa] = 0x7b
 	    cpu.I = 4094
 
@@ -441,7 +442,7 @@ describe('CPU tests', () => {
 	    }
 	    expect(cpu.memory[cpu.I + 0xc]).toBe(0)
 
-	    cpu.load({ data: [ 0xfb55 ] })
+	    cpu.load({ data: [0xfb55] })
 	    cpu.I = 4085
 
 		expect(() => {
@@ -463,7 +464,7 @@ describe('CPU tests', () => {
 	    }
 	    expect(cpu.registers[0xb]).toBe(0)
 
-	    cpu.load({ data: [ 0xfa65 ] })
+	    cpu.load({ data: [0xfa65] })
 	    cpu.I = 4086
 
 		expect(() => {
@@ -472,7 +473,7 @@ describe('CPU tests', () => {
 	})
 
 	test('DW', () => {
-	    cpu.load({ data: [ 0x5154 ] })
+	    cpu.load({ data: [0x5154] })
 
 		expect(() => {
 	        cpu.step()

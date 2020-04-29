@@ -2,66 +2,76 @@ const { INSTRUCTION_SET } = require('../constants/instructionSet')
 
 class Disassembler {
 	static disassemble(opcode) {
-      const instruction = INSTRUCTION_SET.filter(
-      instruction => (opcode & instruction.mask) === instruction.pattern
-    )[0]
+      	// Find the instruction in which the opcode & mask equals the pattern
+    	// For example, the opcode 0x1234 with the mask of 0xf000 applied would return 0x1000.
+    	// This matches the JP_ADDR mask and pattern
+    	const instruction = INSTRUCTION_SET.find( = INSTRUCTION_SET.filter(
+      		instruction => (opcode & instruction.mask) === instruction.pattern
+		)
 
-	const args = instruction.arguments.map(arg => (opcode & arg.mask) >> arg.shift)
+	    // Each instruction may also have arguments. An argument will either be 4, 8, or 12 bits.
+	    // In the case of SE_VX_NN, one argument's mask is 0x0f00 and shift is 8.
+	    // An example opcode of 0x3abb with the mask of 0x0f00 will give us 0xa00, right shifted by 8 will give us 0xa.
 
-	return { instruction, args }
-  }
+		const args = instruction.arguments.map(arg => (opcode & arg.mask) >> arg.shift)
 
-/**
-* A - Address
-* N, NN - Constant
-* R - Register
-* K - Key
-* A - Address
-* V0 - V0
-* I, [ I ] - Implied
-* DT - Delay Timer
-* ST - Sount Timer
-* B - BCD
-* DW - Data Word
-*/
-   static format(decodedInstruction) {
-     const types = decodedInstruction.instruction.arguments.map(arg => arg.type)
-     const rawArgs = decodedInstruction.args
+		// Return an object containing the instruction argument object and an array of arguments
+		return { instruction, args }
+  	}
 
-		let formatted
+	/**
+	* A - Address
+	* N, NN - Constant
+	* R - Register
+	* K - Key
+	* A - Address
+	* V0 - V0
+	* I, [ I ] - Implied
+	* DT - Delay Timer
+	* ST - Sount Timer
+	* B - BCD
+	* DW - Data Word
+	*/
+   	static format(decodedInstruction) {
+		// Print out formatted instructions from the disassembled instructions
+     	const types = decodedInstruction.instruction.arguments.map(arg => arg.type)
+     	const rawArgs = decodedInstruction.args
 
+		let formattedInstruction
+
+		// Format the display of arguments based on type
 		if (rawArgs.length > 0) {
 		    let args = []
 
 		    rawArgs.forEach((arg, i) => {
 				switch (types[i]) {
-		          case 'R':
-		            args.push('V' + arg.toString(16))
+		          	case 'R':
+		            	args.push('V' + arg.toString(16))
 		            break
-		          case 'N':
-		          case 'NN':
-		            args.push('0x' + arg.toString(16).padStart(2, '0'))
-		            break
+		          	case 'N':
+		          	case 'NN':
+		            	args.push('0x' + arg.toString(16).padStart(2, '0'))
+		            	break
 
-		          case 'K':
-		          case 'V0':
-		          case 'I':
-		          case '[I]':
-		          case 'DT':
-		          case 'B':
-		          case 'ST':
-		            args.push(types[i])
+		          	case 'K':
+		          	case 'V0':
+		          	case 'I':
+		          	case '[I]':
+		          	case 'DT':
+		          	case 'B':
+		          	case 'ST':
+		            	args.push(types[i])
 		            break
-		          default:
-		            // DW
-		            args.push('0x' + arg.toString(16))
+		          	default:
+			            // DW
+			            args.push('0x' + arg.toString(16))
 		        }
-		      })
-			  formatted = decodedInstruction.instruction.name
+		    })
+			formattedInstruction = decodedInstruction.instruction.name + ' ' + args.join(', ')
 		} else {
-		formatted = decodedIntruction.instruction.name
+			formattedInstruction = decodedInstruction.instruction.name
 		}
-    return formatted
+		return formattedInstruction
   }
 
   static dump(data) {
