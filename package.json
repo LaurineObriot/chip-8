@@ -10,9 +10,9 @@
 	"repository": "github:laurineobriot/chip-8",
 	"bugs": "https://github.com/laurineobriot/chip8/issues",
     "scripts": {
-		"start": "node index.js",
+		"start": "node scripts/play",
 	    "hexdump": "node scripts/hexdump",
-		"example": "node scripts/run roms/CONNECT4",
+		"example": "node scripts/play roms/CONNECT4",
 	    "test": "jest -- verbose"
     },
   "devDependencies": {
