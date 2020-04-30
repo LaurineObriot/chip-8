@@ -64,13 +64,10 @@ class TerminalCpuInterface extends CpuInterface {
 	        	bg: 'green',
 	        },
 	    })
+
+		this.screen.render()
 	    return collision
 	}
-
-	showDisplay() {
-        this.screen.render()
-    }
-
 
 	enableSound() {}
 
