@@ -13,7 +13,7 @@
 		"start": "node index.js",
 	    "hexdump": "node scripts/hexdump",
 		"example": "node scripts/run roms/CONNECT4",
-	    "test": "jest"
+	    "test": "jest -- verbose"
     },
   "devDependencies": {
     "jest": "^23.6.0"
