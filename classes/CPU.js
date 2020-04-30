@@ -328,6 +328,8 @@ class CPU {
 			        }
 				}
 
+				this.interface.renderDisplay()
+
 				this._nextInstruction()
 		        break
 
