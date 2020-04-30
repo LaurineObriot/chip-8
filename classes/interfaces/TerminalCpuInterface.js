@@ -1,6 +1,7 @@
 const blessed = require('blessed')
 const { CpuInterface } = require('./CpuInterface')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../../data/constants')
+const keyMap = require('../../data/keyMap')
 
 class TerminalCpuInterface extends CpuInterface {
   	constructor() {
@@ -23,20 +24,27 @@ class TerminalCpuInterface extends CpuInterface {
 		this.keys = 0
 		this.soundEnabled = false.
 
-	    this.screen.on('keypress', (_, key) => {
-	        console.log(key)
-	    })
-
-	    this.screen.key(['escape', 'q', 'C-c'], () => {
+		this.screen.key(['escape', 'C-c'], () => {
 	        process.exit(0)
 	    })
+
+		this.screen.on('keypress', this.mapKey)
+	}
+
+	mapKey(_, key) {
+		let keyMask
+
+    	if (keyMap.includes(key.full)) {
+      		let key = (keyMask = 1 << keyMap.indexOf(key.full))
+      		this.keys = this.keys | keyMask
+		}
 	}
 
 	createDisplay() {
         return {
 	        parent: this.screen,
-	        top: 0,
-	        left: 0,
+	        top: 'center',
+	        left: 'center',
 	        width: DISPLAY_WIDTH,
 	        height: DISPLAY_HEIGHT,
 	        style: {
@@ -84,11 +92,17 @@ class TerminalCpuInterface extends CpuInterface {
 
 	waitKey() {}
 
-	getKeys() {}
+	getKeys() {
+		return this.keys
+	}
 
-	enableSound() {}
+	enableSound() {
+		// Sound enabled
+	}
 
-	disableSound() {}
+	disableSound() {
+		// Sound disabled
+	}
 }
 
 module.exports = {
