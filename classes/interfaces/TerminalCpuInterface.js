@@ -1,46 +1,80 @@
+const blessed = require('blessed')
 const { CpuInterface } = require('./CpuInterface')
+const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../../data/constants')
 
 class TerminalCpuInterface extends CpuInterface {
-  constructor() {
-    super()
+  	constructor() {
+    	super()
 
-    this.soundEnabled = false
-    this.display = []
+		this.blessed = blessed
+		this.screen = blessed.screen()
 
-    // Create a two-dimensional array of 0s for display
-    // 0 represents pixel off, 1 represents pixel on
-    for (let i = 0; i < 32; i++) {
-      this.display.push([])
-      for (let j = 0; j < 64; j++) {
-        this.display[i].push(0)
-      }
+		this.screen.title = 'Chip8.js'
+
+		this.display = this.blessed.box(this.createDisplay())
+
+	    this.screenRepresentation = []
+	    for (let i = 0; i < DISPLAY_WIDTH; i++) {
+	        this.screenRepresentation.push([])
+	        for (let j = 0; j < DISPLAY_HEIGHT; j++) {
+	        	this.screenRepresentation[i].push(0)
+	        }
+	    }
+		this.soundEnabled = false
+	}
+
+	createDisplay() {
+        return {
+	        parent: this.screen,
+	        top: 0,
+	        left: 0,
+	        width: DISPLAY_WIDTH,
+	        height: DISPLAY_HEIGHT,
+	        style: {
+	            fg: 'green',
+	            bg: 'black',
+	        },
+        }
+	}
+
+	clearDisplay() {
+        this.display.detach()
+        this.display = this.blessed.box(this.createDisplay())
+	}
+
+	waitKey() {}
+
+ 	getKeys() {}
+
+
+	drawPixel(x, y, value) {
+	    // If collision, will return true
+		const collision = this.screenRepresentation[y][x] & value
+	    // Will XOR value to position x, y
+		this.screenRepresentation[y][x] ^= value
+
+	    this.blessed.box({
+	        parent: this.display,
+	        top: x,
+	        left: y,
+	        width: this.screenRepresentation[y][x],
+	        height: this.screenRepresentation[y][x],
+	        style: {
+	        	fg: 'green',
+	        	bg: 'green',
+	        },
+	    })
+	    return collision
+	}
+
+	showDisplay() {
+        this.screen.render()
     }
-  }
 
-  showDisplay() {}
 
-  clearDisplay() {}
+	enableSound() {}
 
-  waitKey() {
-    // Will wait until key press and return one key
-  }
-
-  getKeys() {
-    // Will return bitmask of all keys set
-  }
-
-  drawPixel(x, y, value) {
-    // If collision, will return true
-    const collision = this.display[y][x] & value
-    // Will XOR value to position x, y
-    this.display[y][x] ^= value
-
-    return collision
-  }
-
-  enableSound() {}
-
-  disableSound() {}
+	disableSound() {}
 }
 
 module.exports = {
