@@ -77,7 +77,7 @@ class CPU {
   	}
 
 
-	step() {
+	async step() {
 		if (this.halted) {
 		    throw new Error(
 			'A problem has been detected and Chip-8 has been shut down to prevent damage to your computer.'
@@ -128,7 +128,7 @@ class CPU {
     	return Disassembler.disassemble(opcode)
     }
 
-  	_execute(instruction) {
+  	async _execute(instruction) {
     	const id = instruction.instruction.id
     	const args = instruction.args
 
@@ -359,7 +359,7 @@ class CPU {
 
 		    case 'LD_VX_K':
 		        // Wait for a key press, store the value of the key in Vx.
-				this.registers[args[0]] = this.interface.waitKey()
+				this.registers[args[0]] = await this.interface.waitKey()
 		        break
 
 		    case 'LD_DT_VX':
