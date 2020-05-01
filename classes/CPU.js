@@ -97,7 +97,7 @@ class CPU {
 		// )
 
 		// Execute code based on the instruction set
-	    this._execute(instruction)
+		await this._execute(instruction, opcode) // will remove opcode after debugging
     }
 
     _nextInstruction() {
@@ -128,7 +128,7 @@ class CPU {
     	return Disassembler.disassemble(opcode)
     }
 
-  	async _execute(instruction) {
+	async _execute(instruction, opcode) {
     	const id = instruction.instruction.id
     	const args = instruction.args
 
@@ -357,8 +357,9 @@ class CPU {
 				this._nextInstruction()
 		        break
 
-		    case 'LD_VX_K':
+				case 'LD_VX_N':
 		        // Wait for a key press, store the value of the key in Vx.
+				this._debug(instruction, opcode)
 				this.registers[args[0]] = await this.interface.waitKey()
 		        break
 
@@ -451,6 +452,14 @@ class CPU {
 				throw new Error('Illegal instruction.')
     	}
   	}
+
+	_debug(instruction, opcode) {
+  		console.log(
+			'PC: ' + this.PC.toString(16).padStart(4, '0') + ' ' + Disassembler.format(instruction),
+			opcode.toString(16).padStart(4, '0'),
+			instruction.instruction.id
+  		)
+	}
 }
 
 module.exports = {
