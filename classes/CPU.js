@@ -157,8 +157,7 @@ class CPU {
 					throw new Error('Stack overflow.')
 				}
 
-		        this.stack[this.SP] = this.PC + 2
-				this.SP++
+				this.SP++		        this.stack[this.SP] = this.PC + 2
 				this.PC = args[0]
 		        break
 

@@ -65,7 +65,7 @@ class TerminalCpuInterface extends CpuInterface {
 	}
 
 	renderDisplay() {
-	    this.clearDisplay()
+		this.clearScreen()
 
 	    this.screenRepresentation.forEach((row, x) => {
 		    row.forEach((col, y) => {
@@ -86,10 +86,22 @@ class TerminalCpuInterface extends CpuInterface {
 	}
 
 
-	clearDisplay() {
+	clearScreen() {
         this.display.detach()
         this.display = this.blessed.box(this.createDisplay())
 	}
+
+	clearDisplay() {
+	  	this.clearScreen()
+	  	this.screenRepresentation = []
+	  	for (let i = 0; i < DISPLAY_WIDTH; i++) {
+			this.screenRepresentation.push([])
+			for (let j = 0; j < DISPLAY_HEIGHT; j++) {
+		  	this.screenRepresentation[i].push(0)
+			}
+	  	}
+	}
+
 
 	drawPixel(x, y, value) {
 	    // If collision, will return true
