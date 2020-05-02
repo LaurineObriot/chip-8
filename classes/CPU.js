@@ -90,11 +90,11 @@ class CPU {
 		// Decode the opcode and get an object with the instruction and arguments
 	    const instruction = this._decode(opcode)
 
-	    // console.log(
-		// 	'PC: ' + this.PC.toString(16).padStart(4, '0') + ' ' + Disassembler.format(instruction),
-		// 	opcode.toString(16).padStart(4, '0'),
-	    //     instruction.instruction.id
-		// )
+		console.log(
+	        'PC: ' + this.PC.toString(16).padStart(4, '0') + ' ' + Disassembler.format(instruction),
+	        opcode.toString(16).padStart(4, '0'),
+	        instruction.instruction.id
+	    )
 
 		// Execute code based on the instruction set
 		await this._execute(instruction, opcode) // will remove opcode after debugging
@@ -253,7 +253,7 @@ class CPU {
 		    case 'SHR_VX_VY':
 		        // Set Vx = Vx SHR 1.
 		        this.registers[0xf] = this.registers[args[0]] & 1
-				this.registers[args[0]] >>= 1
+				this.registers[args[0]] = this.registers[args[1]] >>= 1
 				this._nextInstruction()
 		        break
 
@@ -269,7 +269,7 @@ class CPU {
 		        // Set Vx = Vx SHL 1.
 				this.registers[0xf] = this.registers[args[0]] >> 7
 
-				this.registers[args[0]] = this.registers[args[0]] << 1
+				this.registers[args[0]] = this.registers[args[1]] << 1
 				this._nextInstruction()
 		        break
 
@@ -419,6 +419,7 @@ class CPU {
 		        break
 
 		    case 'LD_I_VX':
+				// this._debug(instruction, opcode)
 		        // Store registers V0 through Vx in memory starting at location I.
 				if (this.I > 4095 - args[1]) {
 				    this.halted = true
@@ -428,11 +429,13 @@ class CPU {
 				for (let i = 0; i <= args[1]; i++) {
 		            this.memory[this.I + i] = this.registers[i]
 		        }
+				this.I = this.I + args[1] + 1
 
 				this._nextInstruction()
 		        break
 
 		    case 'LD_VX_I':
+				// this._debug(instruction, opcode)
 		        // Read registers V0 through Vx from memory starting at location I.
 				if (this.I > 4095 - args[0]) {
 				    this.halted = true
@@ -442,6 +445,7 @@ class CPU {
 				for (let i = 0; i <= args[1]; i++) {
 		            this.registers[i] = this.memory[this.I + i]
 		        }
+				this.I = this.I + args[1] + 1
 
 				this._nextInstruction()
 		        break
