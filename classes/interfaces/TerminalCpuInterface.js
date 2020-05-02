@@ -59,7 +59,6 @@ class TerminalCpuInterface extends CpuInterface {
 	        width: DISPLAY_WIDTH,
 	        height: DISPLAY_HEIGHT,
 	        style: {
-	            fg: 'green',
 	            bg: 'black',
 	        },
         }
@@ -77,7 +76,6 @@ class TerminalCpuInterface extends CpuInterface {
 				width: 1,
 				height: 1,
 				style: {
-				    fg: this.screenRepresentation[y][x] ? 'green' : 'black',
 				    bg: this.screenRepresentation[y][x] ? 'green' : 'black',
 				},
 		    })
