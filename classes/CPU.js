@@ -135,13 +135,13 @@ class CPU {
 		// Execute code based on the ID of the instruction
     	switch (id) {
 	      	case 'CLS':
-		        // Clear the display
+				// 00E0 - Clear the display
 				this.interface.clearDisplay()
 				this._nextInstruction()
 		        break
 
 	      	case 'RET':
-		        // Return from a subroutine.
+				// 00EE - Return from a subroutine.
 				if (this.SP === -1) {
 				  	this.halted = true
 					throw new Error('Stack underflow.')
@@ -152,12 +152,12 @@ class CPU {
 		        break
 
 	      	case 'JP_ADDR':
-	        	// Jump to location nnn.
+				// 1nnn - Jump to location nnn.
 	        	this.PC = args[0]
 	        	break
 
 	      	case 'CALL_ADDR':
-	        	// Call subroutine at nnn.
+				// 2nnn - Call subroutine at nnn.
 				if (this.SP === 15) {
 				  	this.halted = true
 					throw new Error('Stack overflow.')
@@ -169,7 +169,7 @@ class CPU {
 		        break
 
       		case 'SE_VX_NN':
-		        // Skip next instruction if Vx = nn.
+				// 3xnn - Skip next instruction if 	Vx = nn.
 		        if (this.registers[args[0]] === args[1]) {
 					this._skipInstruction()
 		        } else {
@@ -178,7 +178,7 @@ class CPU {
 		        break
 
 		    case 'SNE_VX_NN':
-		        // Skip next instruction if Vx != nn.
+				// 4xnn - Skip next instruction if 	Vx != nn.
 		        if (this.registers[args[0]] !== args[1]) {
 					this._skipInstruction()
 		        } else {
@@ -187,7 +187,7 @@ class CPU {
 		        break
 
 		    case 'SE_VX_VY':
-		        // Skip next instruction if Vx = Vy.
+				// 5xy0 - Skip next instruction if Vx = Vy.
 		        if (this.registers[args[0]] === this.registers[args[1]]) {
 					this._skipInstruction()
 		        } else {
@@ -196,43 +196,43 @@ class CPU {
 		        break
 
 		    case 'LD_VX_NN':
-		        // Set Vx = nn.
+				// 6xnn - Set Vx = nn.
 		        this.registers[args[0]] = args[1]
 				this._nextInstruction()
 		        break
 
 		    case 'ADD_VX_NN':
-		        // Set Vx = Vx + nn.
+				// 7xnn - Set Vx = Vx + nn.
 				this.registers[args[0]] = this.registers[args[0]] + args[1]
 				this._nextInstruction()
 		        break
 
 		    case 'LD_VX_VY':
-		        // Set Vx = Vy.
+				// 8xy0 - Set Vx = Vy.
 		        this.registers[args[0]] = this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'OR_VX_VY':
-		        // Set Vx = Vx OR Vy.
+				// 8xy1 - Set Vx = Vx OR Vy.
 				this.registers[args[0]] |= this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'AND_VX_VY':
-		        // Set Vx = Vx AND Vy.
+				// 8xy2 - Set Vx = Vx AND Vy.
 				this.registers[args[0]] &= this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'XOR_VX_VY':
-		        // Set Vx = Vx XOR Vy.
+				// 8xy3 - Set Vx = Vx XOR Vy.
 				this.registers[args[0]] ^= this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'ADD_VX_VY':
-		        // Set Vx = Vx + Vy, set VF = carry.
+				// 8xy4 - Set Vx = Vx + Vy, set VF = carry.
 				this.registers[args[0]] = this.registers[args[0]] + this.registers[args[1]]
 
 				this.registers[0xf] = this.registers[args[0]] + this.registers[args[1]] > 0xff ? 1 : 0
@@ -242,8 +242,7 @@ class CPU {
 		        break
 
 		    case 'SUB_VX_VY':
-
-		        // Set Vx = Vx - Vy, set VF = NOT borrow.
+				// 8xy6 - Set Vx = Vx SHR 1.
 				this.registers[0xf] = this.registers[args[0]] > this.registers[args[1]] ? 1 : 0
 
 		        this.registers[args[0]] = this.registers[args[0]] - this.registers[args[1]]
@@ -251,9 +250,9 @@ class CPU {
 		        break
 
 		    case 'SHR_VX_VY':
-		        // Set Vx = Vx SHR 1.
+			// 8xy6 - Set Vx = Vx SHR 1.
 		        this.registers[0xf] = this.registers[args[0]] & 1
-				this.registers[args[0]] = this.registers[args[1]] >>= 1
+				this.registers[args[0]] = this.registers[args[1]] >> 1
 				this._nextInstruction()
 		        break
 
@@ -266,7 +265,7 @@ class CPU {
 		        break
 
 		    case 'SHL_VX_VY':
-		        // Set Vx = Vx SHL 1.
+				// 8xy7 - Set Vx = Vy - Vx, set VF = NOT borrow.
 				this.registers[0xf] = this.registers[args[0]] >> 7
 
 				this.registers[args[0]] = this.registers[args[1]] << 1
@@ -274,7 +273,7 @@ class CPU {
 		        break
 
 		    case 'SNE_VX_VY':
-		        // Skip next instruction if Vx != Vy.
+				// 9xy0 - Skip next instruction if 	Vx != Vy.
 				if (this.registers[args[0]] !== this.registers[args[1]]) {
 					this._skipInstruction()
 		        } else {
@@ -283,25 +282,25 @@ class CPU {
 		        break
 
 		    case 'LD_I_ADDR':
-		        // Set I = nnn.
+			// Annn - Set I = nnn.
 				this.I = args[1]
 				this._nextInstruction()
 		        break
 
 		    case 'JP_V0_ADDR':
-		        // Jump to location nnn + V0.
+				// Bnnn - Jump to location nnn + V0.
 				this.PC = this.registers[0] + args[1]
 		        break
 
 		    case 'RND_VX_NN':
-		        // Set Vx = random byte AND nn.
+				// Cxnn - Set Vx = random byte AND nn.
 				let random = Math.floor(Math.random() * 256)
 				this.registers[args[0]] = random & args[1]
 				this._nextInstruction()
 		        break
 
 		    case 'DRW_VX_VY_N':
-		        // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+				// Dxyn - Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
 				if (this.I > 4095 - args[2]) {
 				    this.halted = true
 					throw new Error('Memory out of bounds.')
@@ -334,7 +333,7 @@ class CPU {
 		        break
 
 		    case 'SKP_VX':
-		        // Skip next instruction if key with the value of Vx is pressed.
+				// Ex9E - Skip next instruction if key with the value of Vx is pressed.
 				if (this.interface.getKeys() & (1 << this.registers[args[0]])) {
 					this._skipInstruction()
 		        } else {
@@ -343,7 +342,7 @@ class CPU {
 		        break
 
 		    case 'SKNP_VX':
-		        // Skip next instruction if key with the value of Vx is not pressed.
+				// ExA1 - Skip next instruction if key with the value of Vx is not pressed.
 				if (!(this.interface.getKeys() & (1 << this.registers[args[0]]))) {
 					this._skipInstruction()
 		        } else {
@@ -352,24 +351,24 @@ class CPU {
 		        break
 
 		    case 'LD_VX_DT':
-		        // Set Vx = delay timer value.
+				// Fx07 - Set Vx = delay timer value.
 		        this.registers[args[0]] = this.DT
 				this._nextInstruction()
 		        break
 
 				case 'LD_VX_N':
-		        // Wait for a key press, store the value of the key in Vx.
+				// Fx0A - Wait for a key press, store the value of the key in Vx.
 				this.registers[args[0]] = await this.interface.waitKey()
 		        break
 
 		    case 'LD_DT_VX':
-		        // Set delay timer = Vx.
+				// Fx15 - Set delay timer = Vx.
 		        this.DT = this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'LD_ST_VX':
-		        // Set sound timer = Vx.
+				// Fx18 - Set sound timer = Vx.
 		        this.ST = this.registers[args[1]]
 				if (this.ST > 0) {
 				  	this.soundEnabled = true
@@ -379,13 +378,13 @@ class CPU {
 		        break
 
 		    case 'ADD_I_VX':
-		        // Set I = I + Vx.
+				// Fx1E - Set I = I + Vx.
 				this.I = this.I + this.registers[args[1]]
 				this._nextInstruction()
 		        break
 
 		    case 'LD_F_VX':
-		        // Set I = location of sprite for digit Vx.
+				// Fx29 - Set I = location of sprite for digit Vx.
 				this.I = this.registers[args[1]] * 5
 
 				if (this.registers[args[1]] > 0xf) {
@@ -398,7 +397,7 @@ class CPU {
 		        break
 
 		    case 'LD_B_VX':
-		        // Store BCD representation of Vx in memory locations I, I+1, and I+2.
+				// Fx33 - Store BCD representation of Vx in memory locations I, I+1, and I+2.
 				// BCD means binary-coded decimal
 				// If VX is 0xef, or 239, we want 2, 3, and 9 in I, I+1, and I+2.
 				if (this.I > 4093) {
@@ -419,8 +418,7 @@ class CPU {
 		        break
 
 		    case 'LD_I_VX':
-				// this._debug(instruction, opcode)
-		        // Store registers V0 through Vx in memory starting at location I.
+				// Fx55 - Store registers V0 through Vx in memory starting at location I.
 				if (this.I > 4095 - args[1]) {
 				    this.halted = true
 					throw new Error('Memory out of bounds.')
@@ -435,8 +433,7 @@ class CPU {
 		        break
 
 		    case 'LD_VX_I':
-				// this._debug(instruction, opcode)
-		        // Read registers V0 through Vx from memory starting at location I.
+			// Fx65 - Read registers V0 through Vx from memory starting at location I.
 				if (this.I > 4095 - args[0]) {
 				    this.halted = true
 					throw new Error('Memory out of bounds.')
