@@ -1,8 +1,11 @@
-const { Disassembler } = require('./Disassembler')
+const Disassembler = require('./Disassembler')
 const { FONT_SET } = require('../data/fontSet')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../data/constants')
 
 class CPU {
+	/**
+ 	* @param { class } cpuInterface I/O for Chip8
+ 	*/
 	constructor(cpuInterface) {
 	    this.interface = cpuInterface
 	}
@@ -50,10 +53,13 @@ class CPU {
 		let memoryStart = 0x200
 
 	    // Place ROM data in memory starting at 0x200
-		// Since memory is stored in an 8-bit array and opcodes are 16-bit, we have to store the opcodes across two indices in memory
+		// Since memory is stored in an 8-bit array and opcodes are 16-bit, we have to store the opcodes
+	    // across two indices in memory
     	for (let i = 0; i < romData.length; i++) {
-			this.memory[memoryStart + 2 * i] = romData[i] >> 8 // set the first index with the most significant byte (i.e., 0x1234 would be 0x12)
-		    this.memory[memoryStart + 2 * i + 1] = romData[i] & 0x00ff // set the second index with the least significant byte (i.e., 0x1234 would be 0x34)
+			// set the first index with the most significant byte (i.e., 0x1234 would be 0x12)
+	        this.memory[memoryStart + 2 * i] = romData[i] >> 8
+	        // set the second index with the least significant byte (i.e., 0x1234 would be 0x34)
+	        this.memory[memoryStart + 2 * i + 1] = romData[i] & 0x00ff
     	}
   	}
 
@@ -91,7 +97,7 @@ class CPU {
 	    const instruction = this._decode(opcode)
 
 		// Execute code based on the instruction set
-		await this._execute(instruction, opcode) // will remove opcode after debugging
+		await this._execute(instruction) // will remove opcode after debugging
     }
 
     _nextInstruction() {
@@ -122,7 +128,7 @@ class CPU {
     	return Disassembler.disassemble(opcode)
     }
 
-	async _execute(instruction, opcode) {
+	async _execute(instruction) {
     	const id = instruction.instruction.id
     	const args = instruction.args
 
@@ -321,8 +327,6 @@ class CPU {
 			        }
 				}
 
-				this.interface.renderDisplay()
-
 				this._nextInstruction()
 		        break
 
@@ -444,14 +448,6 @@ class CPU {
 				throw new Error('Illegal instruction.')
     	}
   	}
-
-	_debug(instruction, opcode) {
-  		console.log(
-			'PC: ' + this.PC.toString(16).padStart(4, '0') + ' ' + Disassembler.format(instruction),
-			opcode.toString(16).padStart(4, '0'),
-			instruction.instruction.id
-  		)
-	}
 }
 
 module.exports = {
