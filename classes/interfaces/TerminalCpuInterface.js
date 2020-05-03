@@ -1,6 +1,6 @@
 const blessed = require('blessed')
 const { CpuInterface } = require('./CpuInterface')
-const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../../data/constants')
+const { DISPLAY_HEIGHT, DISPLAY_WIDTH, COLOR } = require('../../data/constants')
 const keyMap = require('../../data/keyMap')
 
 class TerminalCpuInterface extends CpuInterface {
@@ -9,16 +9,10 @@ class TerminalCpuInterface extends CpuInterface {
 
 		this.blessed = blessed
 		this.screen = blessed.screen()
-
 		this.screen.title = 'Chip8.js'
 
-	    this.screenRepresentation = []
-	    for (let i = 0; i < DISPLAY_WIDTH; i++) {
-	        this.screenRepresentation.push([])
-	        for (let j = 0; j < DISPLAY_HEIGHT; j++) {
-	        	this.screenRepresentation[i].push(0)
-	        }
-	    }
+		this.color = blessed.helpers.attrToBinary({ fg: COLOR })
+	    this.frameBuffer = this.createFrameBuffer()
 		this.display = this.blessed.box(this.createDisplay())
 		this.soundEnabled = false
 	    this.keys = null
@@ -34,7 +28,7 @@ class TerminalCpuInterface extends CpuInterface {
 
 	    setInterval(() => {
 	        this.keys = 0
-	    }, 50)	}
+	    }, 100)	}
 
 	mapKey(key) {
 		let keyMask
@@ -91,26 +85,34 @@ class TerminalCpuInterface extends CpuInterface {
         this.display = this.blessed.box(this.createDisplay())
 	}
 
-	clearDisplay() {
-	  	this.clearScreen()
-	  	this.screenRepresentation = []
+	createFrameBuffer() {
+        let frameBuffer = []
 	  	for (let i = 0; i < DISPLAY_WIDTH; i++) {
-			this.screenRepresentation.push([])
+			frameBuffer.push([])
 			for (let j = 0; j < DISPLAY_HEIGHT; j++) {
-		  	this.screenRepresentation[i].push(0)
+				frameBuffer[i].push(0)
 			}
 	  	}
+		return frameBuffer
+	}
+
+	clearDisplay() {
+		this.frameBuffer = createFrameBuffer()
 	}
 
 
 	drawPixel(x, y, value) {
 	    // If collision, will return true
-		const collision = this.screenRepresentation[y][x] & value
+		const collision = this.frameBuffer[y][x] & value
 	    // Will XOR value to position x, y
-		this.screenRepresentation[y][x] ^= value
-    	return collision
+		this.frameBuffer[y][x] ^= value
+		if (this.frameBuffer[y][x]) {
+	        this.screen.fillRegion(this.color, '█', x, x + 1, y, y + 1)
+		} else {
+      		this.screen.clearRegion(x, x + 1, y, y + 1)
+    	}
 	}
-
+	
 	waitKey() {
 		return new Promise(resolve => {
 			this.resolveKey = resolve
