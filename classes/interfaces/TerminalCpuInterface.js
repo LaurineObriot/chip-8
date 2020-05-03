@@ -15,7 +15,7 @@ class TerminalCpuInterface extends CpuInterface {
 	    this.frameBuffer = this.createFrameBuffer()
 		this.display = this.blessed.box(this.createDisplay())
 		this.soundEnabled = false
-	    this.keys = null
+		this.keys = 0
 		this.resolveKey = null
 
 		this.screen.key(['escape', 'C-c'], () => {
@@ -97,7 +97,8 @@ class TerminalCpuInterface extends CpuInterface {
 	}
 
 	clearDisplay() {
-		this.frameBuffer = createFrameBuffer()
+		this.frameBuffer = this.createFrameBuffer()
+		this.screen.clearRegion(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT)
 	}
 
 
@@ -112,7 +113,7 @@ class TerminalCpuInterface extends CpuInterface {
       		this.screen.clearRegion(x, x + 1, y, y + 1)
     	}
 	}
-	
+
 	waitKey() {
 		return new Promise(resolve => {
 			this.resolveKey = resolve
@@ -124,12 +125,12 @@ class TerminalCpuInterface extends CpuInterface {
 	}
 
 	enableSound() {
-		// Sound enabled
-	}
+        this.soundEnabled = true
+    }
 
 	disableSound() {
-		// Sound disabled
-	}
+      	this.soundEnabled = false
+    }
 }
 
 module.exports = {
