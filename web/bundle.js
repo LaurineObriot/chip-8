@@ -37,7 +37,7 @@ class CPU {
 	    this.halted = false
 	    this.soundEnabled = false
 		this.doThing = null
-		this.forceHalt = new Promise(resolve => {
+		this.requestHalt = new Promise(resolve => {
 	  		this.haltExecution = resolve
 		})
 	}
@@ -84,10 +84,12 @@ class CPU {
 	    }
   	}
 
-	halt() {
+	async halt() {
 	  	if (this.haltExecution) {
-			this.haltExecution(0)
-	  	}
+			this.haltExecution(-1)
+
+	        return
+		}
 	}
 
 
@@ -136,7 +138,7 @@ class CPU {
 	    return Disassembler.disassemble(opcode)
 	}
 
-	async _execute(instruction, opcode) {
+	async _execute(instruction) {
 	    const id = instruction.instruction.id
 	    const args = instruction.args
 
@@ -364,9 +366,15 @@ class CPU {
 	        break
 
 	      case 'LD_VX_N':
-		  	// this._debug(instruction, opcode)
 	        // Fx0A - Wait for a key press, store the value of the key in Vx.
-			this.registers[args[0]] = await Promise.race([this.interface.waitKey(), this.forceHalt])
+			const response = await Promise.race([this.interface.waitKey(), this.requestHalt])
+
+			if (response === -1) {
+			  	this.halted = true
+			} else {
+			  	this.registers[args[0]] = response
+			}
+
 	        this._nextInstruction()
 	        break
 
@@ -458,14 +466,6 @@ class CPU {
 	        this.halted = true
 	        throw new Error('Illegal instruction.')
 	    }
-	}
-
-	_debug(instruction, opcode) {
-	  	console.log(
-			'PC: ' + this.PC.toString(16).padStart(4, '0') + ' ' + Disassembler.format(instruction),
-			opcode.toString(16).padStart(4, '0'),
-			instruction.instruction.id
-		)
 	}
 }
 
