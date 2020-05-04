@@ -84,7 +84,7 @@ class CPU {
 	    }
   	}
 
-	async halt() {
+	halt() {
 	  	if (this.haltExecution) {
 			this.haltExecution(-1)
 
@@ -373,6 +373,7 @@ class CPU {
 			  	this.halted = true
 			} else {
 			  	this.registers[args[0]] = response
+				this._nextInstruction()
 			}
 
 	        this._nextInstruction()
