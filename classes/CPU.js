@@ -8,6 +8,8 @@ class CPU {
  	*/
 	constructor(cpuInterface) {
 	    this.interface = cpuInterface
+
+    	this.reset()
 	}
 
 	/**
@@ -34,7 +36,7 @@ class CPU {
         this.I = 0
         this.SP = -1
         this.PC = 0x200
-		this.halted = false
+		this.halted = true
 		this.soundEnabled = false
 		this.doThing = null
 		this.requestHalt = new Promise(resolve => {
@@ -55,6 +57,8 @@ class CPU {
 		// Get ROM data from ROM buffer
 		const romData = romBuffer.data
 		let memoryStart = 0x200
+
+		this.halted = false
 
 	    // Place ROM data in memory starting at 0x200
 		// Since memory is stored in an 8-bit array and opcodes are 16-bit, we have to store the opcodes
