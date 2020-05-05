@@ -1,4 +1,5 @@
 .DS_Store
 /node_modules
 /coverage
-/web/bundle.js 
+/web/bundle.js
+.coveralls.yml
