@@ -29,14 +29,13 @@ while (!r.WindowShouldClose()) {
     	timer = 0
   	}
 
-	let keyPressed = nativeKeyMap.find(key => r.GetKeyPressed() === key)
+	const rawKeyPressed = r.GetKeyPressed()
+    const keyPressed = nativeKeyMap.find(key => rawKeyPressed === key)
 
-    if (isAnyKeyPressed()) {
-      	if (keyPressed) {
-			cpu.interface.keyPressed = cpu.interface.mapKey(keyPressed)
-      	}
+	if (keyPressed) {
+      	cpu.interface.keyPressed = cpu.interface.mapKey(keyPressed)
     } else {
-		cpu.interface.keyPressed = undefined
+		cpu.interface.clearKeys()
     }
 
     cpu.step()
@@ -73,12 +72,3 @@ while (!r.WindowShouldClose()) {
 }
 
 r.CloseWindow()
-
-function isAnyKeyPressed() {
-  	let keyPressed = false
-  	let key = r.GetKeyPressed()
-
-  	if (key >= 32 && key <= 126) keyPressed = true
-
-  	return keyPressed
-}

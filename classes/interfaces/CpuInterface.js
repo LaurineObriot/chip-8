@@ -24,6 +24,9 @@ class CpuInterface {
     getKeys() {
         throw new TypeError('Must be implemented on the inherited class.')
     }
+	clearKeys() {
+  		throw new TypeError('Must be implemented on the inherited class.')
+	}
 
     drawPixel() {
         throw new TypeError('Must be implemented on the inherited class.')

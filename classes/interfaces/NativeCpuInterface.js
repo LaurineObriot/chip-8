@@ -17,14 +17,14 @@ class NativeCpuInterface extends CpuInterface {
 
   	mapKey(key) {
     	let keyMask
+		const keyIndex = nativeKeyMap.indexOf(key)
 
 		if (nativeKeyMap.includes(key)) {
-	      	keyMask = 1 << nativeKeyMap.indexOf(key)
+			keyMask = 1 << keyIndex
 
       		this.keys = this.keys | keyMask
-
-			return nativeKeyMap.indexOf(key)
     	}
+		return keyIndex
   	}
 
   	createFrameBuffer() {
@@ -63,6 +63,10 @@ class NativeCpuInterface extends CpuInterface {
   	getKeys() {
     	return this.keys
   	}
+
+	clearKeys() {
+      	this.keys = 0
+    }
 
   	enableSound() {
     	this.soundEnabled = true
