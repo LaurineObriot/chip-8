@@ -33,10 +33,10 @@ while (!r.WindowShouldClose()) {
 
     if (isAnyKeyPressed()) {
       	if (keyPressed) {
-        	cpu.interface.mapKey(keyPressed)
+			cpu.interface.keyPressed = cpu.interface.mapKey(keyPressed)
       	}
     } else {
-      	cpu.interface.keys = 0
+		cpu.interface.keyPressed = undefined
     }
 
     cpu.step()
