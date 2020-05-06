@@ -96,7 +96,7 @@ class CPU {
 	}
 
 
-	async step() {
+	step() {
 		if (this.halted) {
 		    throw new Error(
 			'A problem has been detected and Chip-8 has been shut down to prevent damage to your computer.'
@@ -110,7 +110,7 @@ class CPU {
 	    const instruction = this._decode(opcode)
 
 		// Execute code based on the instruction set
-		await this._execute(instruction)
+		this._execute(instruction)
     }
 
     _nextInstruction() {
@@ -141,7 +141,7 @@ class CPU {
     	return Disassembler.disassemble(opcode)
     }
 
-	async _execute(instruction) {
+	_execute(instruction) {
     	const id = instruction.instruction.id
     	const args = instruction.args
 
@@ -369,14 +369,14 @@ class CPU {
 
 			case 'LD_VX_N':
 				// Fx0A - Wait for a key press, store the value of the key in Vx.
-				const response = await Promise.race([this.interface.waitKey(), this.requestHalt])
+				const response = this.interface.waitKey()
 
-				if (response === null) {
-					break
-					this.registers[args[0]] = response
-			        this._nextInstruction()
-			        break
+				if (response) {
+		          	this.registers[args[0]] = response
+		          	this.interface.resetKey()
+		          	this._nextInstruction()
 				}
+			        break
 
 		    case 'LD_DT_VX':
 				// Fx15 - Set delay timer = Vx.

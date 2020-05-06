@@ -20,10 +20,10 @@ class DOMCpuInterface extends CpuInterface {
 
 	    this.soundEnabled = false
 	    this.keys = 0
-	    this.resolveKey = null
+		this.keyPressed = undefined
 
 	    document.addEventListener('keydown', event => {
-	      	this.mapKey(event.key)
+			this.keyPressed = this.mapKey(event.key)
 	    })
 
 	    document.addEventListener('keyup', event => {
@@ -38,10 +38,7 @@ class DOMCpuInterface extends CpuInterface {
       		keyMask = 1 << keyMap.indexOf(key)
       		this.keys = this.keys | keyMask
 
-      		if (this.resolveKey) {
-        		this.resolveKey(keyMap.indexOf(key))
-        		this.resolveKey = null
-      		}
+			return keyMap.indexOf(key)
     	}
   	}
 
@@ -89,9 +86,11 @@ class DOMCpuInterface extends CpuInterface {
   	}
 
 	waitKey() {
-	    return new Promise(resolve => {
-	        this.resolveKey = resolve
-	    })
+		return this.keyPressed
+	}
+
+	  resetKey() {
+	    this.keyPressed = undefined
 	}
 
     getKeys() {
