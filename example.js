@@ -23,39 +23,46 @@ r.SetTargetFPS(60)
 
 // Main game loop
 while (!r.WindowShouldClose()) {
-  // Detect window close button or ESC key
-  // Update
-  //----------------------------------------------------------------------------------
-  // TODO: Update your variables here
-  //----------------------------------------------------------------------------------
+  	// Detect window close button or ESC key
+  	// Update
+  	//----------------------------------------------------------------------------------
+  	// TODO: Update your variables here
+  	//----------------------------------------------------------------------------------
 
-  // Draw
-  //----------------------------------------------------------------------------------
-  r.BeginDrawing()
+  	// Draw
+  	//----------------------------------------------------------------------------------
+  	r.BeginDrawing()
 
-  r.ClearBackground(r.RAYWHITE)
+  	r.ClearBackground(r.RAYWHITE)
 
-  r.DrawText('some basic shapes available on raylib', 20, 20, 20, r.DARKGRAY)
+  	console.log('hello')
 
-  var position = {
-    x: 100,
-    y: 100,
-  }
-  var size = {
-    x: 200,
-    y: 150,
-  }
-  r.DrawRectangleV(position, size, r.DARKBLUE)
+r.GetKeyPressed()
+console.log(r.IsKeyDown(r.KEY_ONE))
 
-  r.DrawRectangleRec(
-    {
-      x: 50,
-      y: 50,
-      width: 50,
-      height: 50,
-    },
-    r.PINK
-  )
+// console.log(r.GetKeyPressed())
+
+  	r.DrawText('some basic shapes available on raylib', 20, 20, 20, r.DARKGRAY)
+
+  	var position = {
+	    x: 100,
+	    y: 100,
+  	}
+	var size = {
+	    x: 200,
+	    y: 150,
+	}
+  	r.DrawRectangleV(position, size, r.DARKBLUE)
+
+  	r.DrawRectangleRec(
+    	{
+      		x: 50,
+      		y: 50,
+      		width: 50,
+      		height: 50,
+    	},
+    	r.PINK
+  	)
 
   /*
         DrawCircle(screenWidth/4, 120, 35, DARKBLUE);
@@ -75,8 +82,8 @@ while (!r.WindowShouldClose()) {
                           (Vector2){screenWidth/4*3 - 20, 230},
                           (Vector2){screenWidth/4*3 + 20, 230}, DARKBLUE);
         */
-  r.EndDrawing()
-  //----------------------------------------------------------------------------------
+  	r.EndDrawing()
+  	//----------------------------------------------------------------------------------
 }
 
 // De-Initialization
