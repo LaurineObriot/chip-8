@@ -3,8 +3,8 @@
 	"version": "0.1.2",
 	"description": "A Chip-8 emulator written in JavaScript (Node.js and Browser).",
 	"author": {
-	  "name": "Laurine OBRIOT",
-	  "email": "laurine.obriotbouvier@gmail.com",
+	  	"name": "Laurine OBRIOT",
+	  	"email": "laurine.obriotbouvier@gmail.com",
 	},
 	"main": "index.js",
 	"repository": "github:laurineobriot/chip-8",
@@ -23,20 +23,20 @@
     	"jest": "^24.9.0"
   	},
 	"jest": {
-	  "collectCoverageFrom": [
-		"data/*.js",
-	    "classes/*.js",
-	    "classes/interfaces/*.js",
-		"!data/keyMap.js",
-		"!/node_modules/",
-		"!classes/interfaces/DOMCpuInterface.js",
-		"!classes/interfaces/TerminalCpuInterface.js"
-	  ]
+	  	"collectCoverageFrom": [
+			"data/*.js",
+	    	"classes/*.js",
+	    	"classes/interfaces/*.js",
+			"!data/keyMap.js",
+			"!/node_modules/",
+			"!classes/interfaces/DOMCpuInterface.js",
+			"!classes/interfaces/TerminalCpuInterface.js"
+	  	]
 	},
   	"dependencies": {
-		  "blessed": "^0.1.81",
-	      "brfs": "^2.0.2",
-	      "browserify": "^16.2.3",
-	      "nodemon": "^1.19.0"
+		"blessed": "^0.1.81",
+	    "brfs": "^2.0.2",
+	    "browserify": "^16.2.3",
+	    "nodemon": "^1.19.0"
    }
 }
