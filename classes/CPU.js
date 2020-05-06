@@ -38,10 +38,6 @@ class CPU {
         this.PC = 0x200
 		this.halted = true
 		this.soundEnabled = false
-		this.doThing = null
-		this.requestHalt = new Promise(resolve => {
-		    this.haltExecution = resolve
-		})
     }
 
 
@@ -91,7 +87,6 @@ class CPU {
   	}
 
 	halt() {
-		this.haltExecution(null)
 		this.halted = true
 	}
 
