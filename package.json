@@ -11,7 +11,7 @@
 	"bugs": "https://github.com/laurineobriot/chip8/issues",
     "scripts": {
 		"play": "node scripts/play",
-		"native": "node scripts/native",
+		"play:native": "node scripts/native",
 	    "hexdump": "node scripts/hexdump",
 		"example:terminal": "node scripts/play roms/CONNECT4",
 		"example:native": "node scripts/native roms/PONG",
