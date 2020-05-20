@@ -9,34 +9,32 @@ class CpuInterface {
     	throw new TypeError('Must be implemented on the inherited class.')
     }
 
-	renderDisplay() {
-	    throw new TypeError('Must be implemented on the inherited class.')
-	}
-
 	waitKey() {
         throw new TypeError('Must be implemented on the inherited class.')
     }
 
-	resetKey() {
+	getKeys() {
   		throw new TypeError('Must be implemented on the inherited class.')
 	}
 
-    getKeys() {
+	drawPixel() {
         throw new TypeError('Must be implemented on the inherited class.')
     }
-	clearKeys() {
+
+	enableSound() {
   		throw new TypeError('Must be implemented on the inherited class.')
 	}
 
-    drawPixel() {
+	disableSound() {
         throw new TypeError('Must be implemented on the inherited class.')
     }
 
-    enableSound() {
-        throw new TypeError('Must be implemented on the inherited class.')
+	// Native interface only
+    setKeys() {
+		throw new TypeError('Must be implemented on the inherited class.')
     }
 
-    disableSound() {
+	resetKeys() {
         throw new TypeError('Must be implemented on the inherited class.')
   	}
 }

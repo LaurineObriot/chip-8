@@ -1,71 +1,69 @@
 const r = require('raylib')
+
 const { CpuInterface } = require('./CpuInterface')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../../data/constants')
-const nativeKeyMap = require('../../data/nativeKeyMap')
 
 class NativeCpuInterface extends CpuInterface {
   	constructor() {
     	super()
 
-	    this.frameBuffer = this.createFrameBuffer()
-	    this.screen = r
+		// Screen
+	    this.frameBuffer = this._createFrameBuffer()
+		this.screen = r
 
-	    this.soundEnabled = false
+		// Keys
 	    this.keys = 0
 		this.keyPressed = undefined
-  	}
 
-  	mapKey(key) {
-    	let keyMask
-		const keyIndex = nativeKeyMap.indexOf(key)
+		// Sound
+			this.soundEnabled = false
+   	}
 
-		if (nativeKeyMap.includes(key)) {
-			keyMask = 1 << keyIndex
-
-      		this.keys = this.keys | keyMask
-    	}
-		return keyIndex
-  	}
-
-  	createFrameBuffer() {
+	_createFrameBuffer() {
     	let frameBuffer = []
+
     	for (let i = 0; i < DISPLAY_WIDTH; i++) {
       		frameBuffer.push([])
       		for (let j = 0; j < DISPLAY_HEIGHT; j++) {
         		frameBuffer[i].push(0)
       		}
     	}
+
     	return frameBuffer
   	}
 
-  	clearDisplay() {
-	    this.frameBuffer = this.createFrameBuffer()
-		this.screen.ClearBackground(this.screen.BLACK)
-  	}
+	setKeys(keyIndex) {
+      	let keyMask = 1 << keyIndex
 
-  	drawPixel(x, y, value) {
-	    // If collision, will return true
-	    const collision = this.frameBuffer[y][x] & value
-	    // Will XOR value to position x, y
-	    this.frameBuffer[y][x] ^= value
+	  	this.keys = this.keys | keyMask
+      	this.keyPressed = keyIndex
+    }
 
-    	return collision
+	resetKeys() {
+      	this.keys = 0
+      	this.keyPressed = undefined
   	}
 
   	waitKey() {
 		return this.keyPressed
-	  }
-
-	resetKey() {
-	    this.keyPressed = undefined
-  	}
+	}
 
   	getKeys() {
     	return this.keys
   	}
 
-	clearKeys() {
-      	this.keys = 0
+	drawPixel(x, y, value) {
+      	// If collision, will return true
+      	const collision = this.frameBuffer[y][x] & value
+      	// Will XOR value to position x, y
+      	this.frameBuffer[y][x] ^= value
+
+      	return collision
+    }
+
+    clearDisplay() {
+      	this.frameBuffer = this._createFrameBuffer()
+      	this.screen.ClearBackground(this.screen.BLACK)
     }
 
   	enableSound() {

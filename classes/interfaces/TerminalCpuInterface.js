@@ -1,4 +1,5 @@
 const blessed = require('blessed')
+
 const { CpuInterface } = require('./CpuInterface')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH, COLOR } = require('../../data/constants')
 const keyMap = require('../../data/keyMap')
@@ -8,39 +9,44 @@ class TerminalCpuInterface extends CpuInterface {
     	super()
 
 		this.blessed = blessed
+
+		// Screen
+		this.frameBuffer = this._createFrameBuffer()
 		this.screen = blessed.screen()
 		this.screen.title = 'Chip8.js'
-
 		this.color = blessed.helpers.attrToBinary({ fg: COLOR })
-	    this.frameBuffer = this.createFrameBuffer()
-		this.display = this.blessed.box(this.createDisplay())
-		this.soundEnabled = false
+
+    	// Keys
 		this.keys = 0
 		this.keyPressed = undefined
 
+		// Sound
+	    this.soundEnabled = false
+
+	    // Exit game
 		this.screen.key(['escape', 'C-c'], () => {
 	        process.exit(0)
 	    })
 
+		// =====================================================================
+	    // Key Down Event
+	    // =====================================================================
 		this.screen.on('keypress', (_, key) => {
-			this.keyPressed = this.mapKey(key)
+			const keyIndex = keyMap.indexOf(key.full)
+
+			if (keyIndex) {
+			  	this._setKeys(keyIndex)
+			}
 	    })
 
+		// =====================================================================
+		// Key Up Event
+		// ====================================================================
+
 	    setInterval(() => {
-			this.clearKeys()
-	    }, 100)	}
-
-	mapKey(key) {
-		let keyMask
-		const keyIndex = keyMap.indexOf(key.full)
-
-    	if (keyMap.includes(key.full)) {
-			keyMask = 1 << keyIndex
-
-      		this.keys = this.keys | keyMask
-
-			return keyIndex
-		}
+			// Emulate a keyup event to clear all pressed keys
+	        this._resetKeys()
+	    }, 100)
 	}
 
 	createDisplay() {
@@ -112,20 +118,41 @@ class TerminalCpuInterface extends CpuInterface {
     	}
 	}
 
-	waitKey() {
-		return this.keyPressed
+	_createFrameBuffer() {
+		let frameBuffer = []
+
+		for (let i = 0; i < DISPLAY_WIDTH; i++) {
+			frameBuffer.push([])
+			for (let j = 0; j < DISPLAY_HEIGHT; j++) {
+				frameBuffer[i].push(0)
+			}
+		}
+
+		return frameBuffer
 	}
 
-	  resetKey() {
-	    this.keyPressed = undefined
+	_setKeys(keyIndex) {
+      	let keyMask = 1 << keyIndex
+
+      	this.keys = this.keys | keyMask
+      	this.keyPressed = keyIndex
     }
 
-	getKeys() {
-		return this.keys
-	}
+    _resetKeys() {
+      	this.keys = 0
+      	this.keyPressed = undefined
+    }
 
-	clearKeys() {
-  		this.keys = 0
+    waitKey() {
+      	// Get and reset key
+      	const keyPressed = this.keyPressed
+      	this.keyPressed = undefined
+
+      	return keyPressed
+    }
+
+    getKeys() {
+      	return this.keys
 	}
 
 
