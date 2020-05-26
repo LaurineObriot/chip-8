@@ -38,12 +38,17 @@ class NativeCpuInterface extends CpuInterface {
     	return frameBuffer
   	}
 
-	setKeys(keyIndex) {
-      	let keyMask = 1 << keyIndex
+	setKeys(keyIndices) {
+      	this.keys = keyIndices
+    }
 
-	  	this.keys = this.keys | keyMask
+	setKey(keyIndex) {
       	this.keyPressed = keyIndex
     }
+
+	releaseKey(keyIndex) {
+  		this.keyPressed = this.keyPressed === keyIndex ? 0 : keyIndex
+	}
 
 	resetKeys() {
       	this.keys = 0
