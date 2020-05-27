@@ -4,81 +4,81 @@ const { CpuInterface } = require('./CpuInterface')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH } = require('../../data/constants')
 
 /**
-* NativeCpuInterface
-*
-* A CPU interface designed for creating a native program.
+ 	* NativeCpuInterface
+ 	*
+ 	* A CPU interface designed for creating a native program.
 */
-
 class NativeCpuInterface extends CpuInterface {
   	constructor() {
     	super()
 
-		// Screen
+	    // Screen
 	    this.frameBuffer = this._createFrameBuffer()
-		this.screen = r
+	    this.screen = r
 
-		// Keys
+	    // Keys
 	    this.keys = 0
-		this.keyPressed = undefined
+	    this.keyPressed = undefined
 
-		// Sound
-			this.soundEnabled = false
-   	}
+	    // Sound
+	    this.soundEnabled = false
+  	}
 
-	_createFrameBuffer() {
-    	let frameBuffer = []
+  	_createFrameBuffer() {
+	    let frameBuffer = []
 
-    	for (let i = 0; i < DISPLAY_WIDTH; i++) {
-      		frameBuffer.push([])
-      		for (let j = 0; j < DISPLAY_HEIGHT; j++) {
-        		frameBuffer[i].push(0)
-      		}
-    	}
+	    for (let i = 0; i < DISPLAY_WIDTH; i++) {
+	      	frameBuffer.push([])
+	      	for (let j = 0; j < DISPLAY_HEIGHT; j++) {
+	        	frameBuffer[i].push(0)
+	      	}
+	    }
 
     	return frameBuffer
   	}
 
-	setKeys(keyIndices) {
-		const prevKeys = this.keys
-      	this.keys = keyIndices
-		this.keyPressed = undefined
+  	setKeys(keyIndices) {
+	    const prevKeys = this.keys
+	    this.keys = keyIndices
 
-		// Check previous keys for the first new key and make that the
+	    this.keyPressed = undefined
+
+	    // Check previous keys for the first new key and make that the
 	    // waitKey pressed
 	    for (let i = 0; i < 16; i++) {
-	      	if (!(prevKeys & (1 << i)) && 	this.keys & (1 << i)) {
-				this.keyPressed = i
+	      	if (!(prevKeys & (1 << i)) && this.keys & (1 << i)) {
+	        	this.keyPressed = i
 	        	break
 	      	}
 	    }
-	}
+  	}
 
-	resetKeys() {
-      	this.keys = 0
-      	this.keyPressed = undefined
+  	resetKeys() {
+	    this.keys = 0
+	    this.keyPressed = undefined
   	}
 
   	waitKey() {
-		return this.keyPressed
-	}
+    	return this.keyPressed
+  	}
 
   	getKeys() {
     	return this.keys
   	}
 
-	drawPixel(x, y, value) {
-      	// If collision, will return true
-      	const collision = this.frameBuffer[y][x] & value
-      	// Will XOR value to position x, y
-      	this.frameBuffer[y][x] ^= value
+  	drawPixel(x, y, value) {
+    	// If collision, will return true
+    	const collision = this.frameBuffer[y][x] & value
+    	// Will XOR value to position x, y
+    	this.frameBuffer[y][x] ^= value
 
-      	return collision
-    }
+    	return collision
+  	}
 
-    clearDisplay() {
-      	this.frameBuffer = this._createFrameBuffer()
-      	this.screen.ClearBackground(this.screen.BLACK)
-    }
+  	clearDisplay() {
+    	this.frameBuffer = this._createFrameBuffer()
+    	this.screen.ClearBackground(this.screen.BLACK)
+  	}
 
   	enableSound() {
     	this.soundEnabled = true

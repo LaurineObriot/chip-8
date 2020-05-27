@@ -4,167 +4,125 @@ const { CpuInterface } = require('./CpuInterface')
 const { DISPLAY_HEIGHT, DISPLAY_WIDTH, COLOR } = require('../../data/constants')
 const keyMap = require('../../data/keyMap')
 
+/**
+ 	* TerminalCpuInterface
+ 	*
+ 	* A CPU interface with the terminal.
+*/
 class TerminalCpuInterface extends CpuInterface {
   	constructor() {
     	super()
 
-		this.blessed = blessed
+    	this.blessed = blessed
 
-		// Screen
-		this.frameBuffer = this._createFrameBuffer()
-		this.screen = blessed.screen()
-		this.screen.title = 'Chip8.js'
-		this.color = blessed.helpers.attrToBinary({ fg: COLOR })
+	    // Screen
+	    this.frameBuffer = this._createFrameBuffer()
+	    this.screen = blessed.screen({ smartCSR: true })
+	    this.screen.title = 'Chip8.js'
+	    this.color = blessed.helpers.attrToBinary({ fg: COLOR })
 
-    	// Keys
-		this.keys = 0
-		this.keyPressed = undefined
+	    // Keys
+	    this.keys = 0
+	    this.keyPressed = undefined
 
-		// Sound
+	    // Sound
 	    this.soundEnabled = false
 
 	    // Exit game
-		this.screen.key(['escape', 'C-c'], () => {
-	        process.exit(0)
-	    })
+	    this.screen.key(['escape', 'C-c'], () => {
+	      	process.exit(0)
+    	})
 
-		// =====================================================================
+	    // =========================================================================
 	    // Key Down Event
-	    // =====================================================================
-		this.screen.on('keypress', (_, key) => {
-			const keyIndex = keyMap.indexOf(key.full)
+	    // =========================================================================
 
-			if (keyIndex > -1) {
-			  	this._setKeys(keyIndex)
-			}
+	    this.screen.on('keypress', (_, key) => {
+	      	const keyIndex = keyMap.indexOf(key.full)
+
+	      	if (keyIndex > -1) {
+	        	this._setKeys(keyIndex)
+	      	}
 	    })
 
-		// =====================================================================
-		// Key Up Event
-		// ====================================================================
+	    // =========================================================================
+	    // Key Up Event
+	    // =========================================================================
 
 	    setInterval(() => {
-			// Emulate a keyup event to clear all pressed keys
-	        this._resetKeys()
+	      	// Emulate a keyup event to clear all pressed keys
+	      	this._resetKeys()
 	    }, 100)
-	}
+  	}
 
-	createDisplay() {
-        return {
-	        parent: this.screen,
-	        top: 'center',
-	        left: 'center',
-	        width: DISPLAY_WIDTH,
-	        height: DISPLAY_HEIGHT,
-	        style: {
-	            bg: 'black',
-	        },
-        }
-	}
+  	_createFrameBuffer() {
+    	let frameBuffer = []
 
-	renderDisplay() {
-		this.clearScreen()
-
-	    this.screenRepresentation.forEach((row, x) => {
-		    row.forEach((col, y) => {
-		  		this.blessed.box({
-				parent: this.display,
-				top: y,
-				left: x,
-				width: 1,
-				height: 1,
-				style: {
-				    bg: this.screenRepresentation[y][x] ? 'green' : 'black',
-				},
-		    })
-		})
-	})
-
-	  this.screen.render()
-	}
-
-
-	clearScreen() {
-        this.display.detach()
-        this.display = this.blessed.box(this.createDisplay())
-	}
-
-	createFrameBuffer() {
-        let frameBuffer = []
-	  	for (let i = 0; i < DISPLAY_WIDTH; i++) {
-			frameBuffer.push([])
-			for (let j = 0; j < DISPLAY_HEIGHT; j++) {
-				frameBuffer[i].push(0)
-			}
-	  	}
-		return frameBuffer
-	}
-
-	clearDisplay() {
-		this.frameBuffer = this.createFrameBuffer()
-		this.screen.clearRegion(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT)
-	}
-
-
-	drawPixel(x, y, value) {
-	    // If collision, will return true
-		const collision = this.frameBuffer[y][x] & value
-	    // Will XOR value to position x, y
-		this.frameBuffer[y][x] ^= value
-		if (this.frameBuffer[y][x]) {
-	        this.screen.fillRegion(this.color, '█', x, x + 1, y, y + 1)
-		} else {
-      		this.screen.clearRegion(x, x + 1, y, y + 1)
+    	for (let i = 0; i < DISPLAY_WIDTH; i++) {
+      		frameBuffer.push([])
+      		for (let j = 0; j < DISPLAY_HEIGHT; j++) {
+        		frameBuffer[i].push(0)
+      		}
     	}
-	}
 
-	_createFrameBuffer() {
-		let frameBuffer = []
+    	return frameBuffer
+  	}
 
-		for (let i = 0; i < DISPLAY_WIDTH; i++) {
-			frameBuffer.push([])
-			for (let j = 0; j < DISPLAY_HEIGHT; j++) {
-				frameBuffer[i].push(0)
-			}
-		}
+  	_setKeys(keyIndex) {
+    	let keyMask = 1 << keyIndex
 
-		return frameBuffer
-	}
+    	this.keys = this.keys | keyMask
+    	this.keyPressed = keyIndex
+  	}
 
-	_setKeys(keyIndex) {
-      	let keyMask = 1 << keyIndex
+  	_resetKeys() {
+    	this.keys = 0
+    	this.keyPressed = undefined
+  	}
 
-      	this.keys = this.keys | keyMask
-      	this.keyPressed = keyIndex
-    }
+  	waitKey() {
+	    // Get and reset key
+	    const keyPressed = this.keyPressed
+	    this.keyPressed = undefined
 
-    _resetKeys() {
-      	this.keys = 0
-      	this.keyPressed = undefined
-    }
+    	return keyPressed
+  	}
 
-    waitKey() {
-      	// Get and reset key
-      	const keyPressed = this.keyPressed
-      	this.keyPressed = undefined
+	getKeys() {
+    	return this.keys
+  	}
 
-      	return keyPressed
-    }
+  	drawPixel(x, y, value) {
+	    // If collision, will return true
+	    const collision = this.frameBuffer[y][x] & value
+	    // Will XOR value to position x, y
+	    this.frameBuffer[y][x] ^= value
 
-    getKeys() {
-      	return this.keys
-	}
+	    if (this.frameBuffer[y][x]) {
+	      	this.screen.fillRegion(this.color, '█', x, x + 1, y, y + 1)
+	    } else {
+	      	this.screen.clearRegion(x, x + 1, y, y + 1)
+	    }
 
+    	this.screen.render()
 
-	enableSound() {
-        this.soundEnabled = true
-    }
+    	return collision
+  	}
 
-	disableSound() {
-      	this.soundEnabled = false
-    }
+  	clearDisplay() {
+	    this.frameBuffer = this._createFrameBuffer()
+	    this.screen.clearRegion(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT)
+  	}
+
+  	enableSound() {
+    	this.soundEnabled = true
+  	}
+
+  	disableSound() {
+    	this.soundEnabled = false
+  	}
 }
 
 module.exports = {
-  TerminalCpuInterface,
+  	TerminalCpuInterface,
 }

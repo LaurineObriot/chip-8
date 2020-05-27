@@ -9,11 +9,10 @@ const { NativeCpuInterface } = require('./classes/NativeCpuInterface')
  	*
  	* Export CPU, Rom Buffer, and all CPU interfaces for public npmjs repository.
 */
-
 module.exports = {
   	RomBuffer,
   	CPU,
   	TerminalCpuInterface,
   	WebCpuInterface,
-	NativeCpuInterface,
+  	NativeCpuInterface,
 }

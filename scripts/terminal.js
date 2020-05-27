@@ -1,5 +1,4 @@
 const fs = require('fs')
-
 const { CPU } = require('../classes/CPU')
 const { RomBuffer } = require('../classes/RomBuffer')
 const { TerminalCpuInterface } = require('../classes/interfaces/TerminalCpuInterface')
@@ -15,13 +14,15 @@ cpu.load(romBuffer)
 
 let timer = 0
 function cycle() {
-	timer++
-	if (timer % 5 === 0) {
-      	cpu.tick()
-      	timer = 0
-    }
-	cpu.step()
-	setTimeout(cycle, 3)
+  	timer++
+  	if (timer % 5 === 0) {
+	    cpu.tick()
+	    timer = 0
+  	}
+
+  	cpu.step()
+
+  	setTimeout(cycle, 3)
 }
 
 cycle()
