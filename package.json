@@ -16,6 +16,9 @@
   "test": "jest",
   "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
 },
+"engines": {
+  "node": "12.18.0"
+}
 "devDependencies": {
   "coveralls": "^3.0.5",
   "jest": "^24.9.0"
